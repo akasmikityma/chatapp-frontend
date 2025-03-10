@@ -11,7 +11,10 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <Provider store={store}>
       <HelmetProvider>
         <CssBaseline />
-        <div onContextMenu={(e) => e.preventDefault()}>
+        <div onContextMenu={(e) => {
+            if (!e.target.closest(".disable-right-click")) return;
+            e.preventDefault();
+          }}>
           <App />
         </div>
       </HelmetProvider>

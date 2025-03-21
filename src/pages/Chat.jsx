@@ -119,7 +119,7 @@ const Chat = ({ chatId, user }) => {
   }, [messages]);
 
   useEffect(() => {
-    if (chatDetails.isError) return navigate("/");
+    if (chatDetails.isError) return navigate("/home");
   }, [chatDetails.isError]);
 
   const newMessagesListener = useCallback(

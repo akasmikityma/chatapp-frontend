@@ -109,7 +109,7 @@ const Groups = () => {
   }, [groupDetails.data]);
 
   const navigateBack = () => {
-    navigate("/");
+    navigate("/home");
   };
 
   const handleMobile = () => {

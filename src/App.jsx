@@ -1,5 +1,5 @@
 import React, { Suspense, lazy, useEffect } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import ProtectRoute from "./components/auth/ProtectRoute";
 import { LayoutLoader } from "./components/layout/Loaders";
 import axios from "axios";
@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { userExists, userNotExists } from "./redux/reducers/auth";
 import { Toaster } from "react-hot-toast";
 import { SocketProvider } from "./socket";
+import LandingPage from "./pages/LandingPage";
 
 const Home = lazy(() => import("./pages/Home"));
 const Login = lazy(() => import("./pages/Login"));
@@ -41,22 +42,47 @@ const App = () => {
     <BrowserRouter>
       <Suspense fallback={<LayoutLoader />}>
         <Routes>
+          {/* Redirect to LandingPage if not signed in */}
           <Route
+            path="/"
+            element={user ? <Navigate to="/home" /> : <LandingPage />}
+          />
+          <Route
+            path="/home"
             element={
               <SocketProvider>
-                <ProtectRoute user={user} />
+                <ProtectRoute user={user}>
+                  <Home />
+                </ProtectRoute>
               </SocketProvider>
             }
-          >
-            <Route path="/" element={<Home />} />
-            <Route path="/chat/:chatId" element={<Chat />} />
-            <Route path="/groups" element={<Groups />} />
-          </Route>
+          />
+          <Route
+            path="/chat/:chatId"
+            element={
+              <SocketProvider>
+                <ProtectRoute user={user}>
+                  <Chat />
+                </ProtectRoute>
+              </SocketProvider>
+            }
+          />
+          <Route
+            path="/groups"
+            element={
+              <SocketProvider>
+                <ProtectRoute user={user}>
+                  <Groups />
+                </ProtectRoute>
+              </SocketProvider>
+            }
+          />
 
+          {/* Redirect to LandingPage if not signed in */}
           <Route
             path="/login"
             element={
-              <ProtectRoute user={!user} redirect="/">
+              user ? <Navigate to="/home" /> : <ProtectRoute user={!user}>
                 <Login />
               </ProtectRoute>
             }
